@@ -1,0 +1,10 @@
+{
+  "name": "learn-pcl",
+  "version-string": "0.1.0",
+  "description": "PCL C++ learning workspace",
+  "dependencies": [
+    "pcl",
+    "eigen3",
+    "boost"
+  ]
+}

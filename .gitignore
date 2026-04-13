@@ -4,6 +4,7 @@
 /lib/
 /dist/
 /out/
+/vcpkg_installed/
 
 # CMake
 CMakeFiles/
@@ -47,3 +48,6 @@ Thumbs.db
 # Tooling
 .cache/
 .clangd/
+
+# Vcpkg
+/vcpkg/
