@@ -25,7 +25,12 @@ PCL C++ 库的学习
 /home/lingzhiying/learn/learn_pcl/vcpkg/downloads/tools/cmake-4.2.3-linux/cmake-4.2.3-linux-x86_64/bin/cmake --build build -j
 ./build/pcl_basic
 ```
-2. 如需使用系统 CMake，请确保版本 >= 3.20。
+2. 使用脚本一键构建:
+```bash
+./scripts/build.sh
+./build/pcl_basic
+```
+3. 如需使用系统 CMake，请确保版本 >= 3.20。
 
 **CMakeLists.txt 示例**
 ```cmake
