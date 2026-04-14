@@ -17,35 +17,38 @@ PCL C++ 库的学习
 - 可选工具: `VTK`（可视化）、`OpenNI`（传感器支持）
 
 **构建方式**
-1. 创建 `CMakeLists.txt`，示例:
+1. 使用 vcpkg 工具链配置（推荐，当前仓库默认）:
+```bash
+/home/lingzhiying/learn/learn_pcl/vcpkg/downloads/tools/cmake-4.2.3-linux/cmake-4.2.3-linux-x86_64/bin/cmake -S . -B build \
+  -DCMAKE_TOOLCHAIN_FILE=/home/lingzhiying/learn/learn_pcl/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+/home/lingzhiying/learn/learn_pcl/vcpkg/downloads/tools/cmake-4.2.3-linux/cmake-4.2.3-linux-x86_64/bin/cmake --build build -j
+./build/pcl_basic
+```
+2. 如需使用系统 CMake，请确保版本 >= 3.20。
+
+**CMakeLists.txt 示例**
 ```cmake
-cmake_minimum_required(VERSION 3.10)
-project(pcl_learning)
+cmake_minimum_required(VERSION 3.20)
+project(pcl_learning LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(PCL REQUIRED)
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
+find_package(PCL CONFIG REQUIRED COMPONENTS common)
 
 add_executable(pcl_demo src/main.cpp)
-target_link_libraries(pcl_demo ${PCL_LIBRARIES})
-```
-2. 构建与运行:
-```bash
-mkdir -p build
-cd build
-cmake ..
-cmake --build .
-./pcl_demo
+target_include_directories(pcl_demo PRIVATE ${PCL_INCLUDE_DIRS})
+target_compile_definitions(pcl_demo PRIVATE ${PCL_DEFINITIONS})
+target_link_libraries(pcl_demo PRIVATE ${PCL_LIBRARIES})
 ```
 
-**目录结构建议**
+**目录结构**
 - `src/`：示例代码
 - `include/`：头文件与工具封装
 - `data/`：点云数据集（`*.pcd` 等）
 - `notes/`：学习笔记与总结
 - `scripts/`：辅助脚本
+- `build/`：构建输出（本地生成）
+- `vcpkg/`：依赖管理与工具链
 
 **学习路线**
 1. 点云基础: 点类型、坐标系、常见数据格式。

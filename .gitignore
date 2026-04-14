@@ -5,6 +5,10 @@
 /dist/
 /out/
 /vcpkg_installed/
+/.local/
+/.build/
+/patchelf-build/
+/patchelf-src/
 
 # CMake
 CMakeFiles/
@@ -32,6 +36,7 @@ CTestTestfile.cmake
 *.swp
 *.swo
 *~
+/.codex
 
 # IDE / editor
 .vscode/
