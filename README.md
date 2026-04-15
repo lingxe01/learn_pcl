@@ -1,59 +1,89 @@
-PCL C++ 库的学习
+PCL Web 点云可视化（最小分支）
 
 **简介**
-本仓库用于记录 PCL（Point Cloud Library）在 C++ 中的学习与实践，包括环境配置、基础概念、常用算法、示例代码与踩坑记录。
+这个分支专门用于“服务器端处理点云，本地浏览器通过 SSH 端口转发查看 3D 点云”。
+目标不是覆盖全部 PCL 示例，而是把 Web 可视化链路收敛到最小可用集合，方便别人直接拉取代码后使用。
 
-**学习目标**
-1. 理解点云数据的基础概念与常用格式。
-2. 掌握 PCL 常见模块与算法的使用方法。
-3. 能够用 C++ 构建可复用的点云处理流程。
-4. 形成可持续迭代的示例与笔记。
+**分支定位**
+- 默认只构建 `pcd2web`
+- 默认只依赖 `PCL + nlohmann-json + Python3`
+- 默认通过 `web/index.html` + `scripts/serve_web.py` 提供浏览器查看能力
+- 默认支持网页端直接输入点云路径、体素尺寸、x/y/z 范围
 
 **环境与依赖**
-- 操作系统: Linux（优先）/ Windows（可选）
-- 编译器: GCC/Clang（建议支持 C++17）
-- 构建工具: CMake
-- 依赖库: `PCL`、`Eigen`、`Boost`
-- 可选工具: `VTK`（可视化）、`OpenNI`（传感器支持）
+- 服务器端:
+  - Linux
+  - GCC / Clang，支持 `C++17`
+  - `CMake >= 3.20`
+  - `PCL`
+  - `nlohmann-json`
+  - `python3`
+  - 可通过 SSH 登录
+- 本地端:
+  - `ssh` 客户端
+  - 浏览器，例如 Chrome / Edge / Firefox
+
+**最小依赖说明**
+- `pcd2web` 实际只需要 PCL 的 `common`、`io`、`filters` 组件
+- 这个分支默认不要求 `PCL visualization`
+- 这个分支默认不要求 `OpenCV`
+- 本地端不需要安装 `PCL`
 
 **构建方式**
-1. 使用 vcpkg 工具链配置（推荐，当前仓库默认）:
+1. 如果你本机已经有 `vcpkg`，可以直接用工具链构建:
 ```bash
-/home/lingzhiying/learn/learn_pcl/vcpkg/downloads/tools/cmake-4.2.3-linux/cmake-4.2.3-linux-x86_64/bin/cmake -S . -B build \
-  -DCMAKE_TOOLCHAIN_FILE=/home/lingzhiying/learn/learn_pcl/vcpkg/scripts/buildsystems/vcpkg.cmake
-
-/home/lingzhiying/learn/learn_pcl/vcpkg/downloads/tools/cmake-4.2.3-linux/cmake-4.2.3-linux-x86_64/bin/cmake --build build -j
-./build/pcl_basic
+CMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake \
+bash scripts/build.sh
 ```
-2. 使用脚本一键构建:
+
+2. 如果依赖已经通过系统包安装好，直接执行:
 ```bash
-./scripts/build.sh
-./build/pcl_basic
+bash scripts/build.sh
+./build/pcd2web --help
 ```
-3. 如需使用系统 CMake，请确保版本 >= 3.20。
 
-**CMakeLists.txt 示例**
+3. `scripts/build.sh` 默认只编译 `pcd2web`，这是这个分支推荐的入口。
+
+**给别人直接使用的最短路径**
+```bash
+git clone -b web-viewer-minimal git@github.com:lingxe01/learn_pcl.git
+cd learn_pcl
+bash scripts/build.sh
+python3 scripts/serve_web.py --host 127.0.0.1 --port 8080
+```
+
+然后在本地执行：
+```bash
+ssh -N -L 8080:127.0.0.1:8080 <你的用户名>@10.93.143.46
+```
+
+浏览器打开：
+```text
+http://127.0.0.1:8080/web/
+```
+
+**当前分支的最小 CMake 形态**
 ```cmake
 cmake_minimum_required(VERSION 3.20)
-project(pcl_learning LANGUAGES CXX)
+project(pointcloud_web_viewer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(PCL CONFIG REQUIRED COMPONENTS common io)
+find_package(PCL CONFIG REQUIRED COMPONENTS common io filters)
+find_package(nlohmann_json CONFIG REQUIRED)
 
-add_executable(pcl_demo src/main.cpp)
-target_include_directories(pcl_demo PRIVATE ${PCL_INCLUDE_DIRS})
-target_compile_definitions(pcl_demo PRIVATE ${PCL_DEFINITIONS})
-target_link_libraries(pcl_demo PRIVATE ${PCL_LIBRARIES})
+add_executable(pcd2web src/pcd2web.cpp)
+target_include_directories(pcd2web PRIVATE ${PCL_INCLUDE_DIRS})
+target_compile_definitions(pcd2web PRIVATE ${PCL_DEFINITIONS})
+target_link_libraries(pcd2web PRIVATE ${PCL_LIBRARIES} nlohmann_json::nlohmann_json)
 ```
 
 **目录结构**
-- `src/`：示例代码
-- `include/`：头文件与工具封装
-- `data/`：点云数据集（`*.pcd` 等）
-- `notes/`：学习笔记与总结
-- `scripts/`：辅助脚本
+- `src/pcd2web.cpp`：服务器端点云转 JSON
+- `scripts/serve_web.py`：Web 服务与转换接口
+- `web/index.html`：浏览器端 3D 点云查看器
+- `config/pointcloud.json`：可选默认配置
+- `scripts/build.sh`：最小化构建脚本
 - `build/`：构建输出（本地生成）
-- `vcpkg/`：依赖管理与工具链
 
 **学习路线**
 1. 点云基础: 点类型、坐标系、常见数据格式。
@@ -104,7 +134,7 @@ int main() {
 
 **常见问题**
 - 找不到 `PCLConfig.cmake`: 确认已安装 `PCL` 开发包，并将其 CMake 配置路径加入 `CMAKE_PREFIX_PATH`。
-- 编译报缺少 `VTK` 或 `Boost`: 安装对应依赖并确保版本匹配。
+- 编译报缺少 `nlohmann_json`: 确认已经安装 `nlohmann-json`，或者通过 `vcpkg` 提供工具链。
 - 运行时找不到库: 检查 `LD_LIBRARY_PATH` 或系统动态库路径。
 
 **Web 查看点云**
@@ -222,9 +252,9 @@ web/index.html 在浏览器中加载并绘制 3D 点云
 - `filters`
 
 说明：
-- 当前仓库的 `CMakeLists.txt` 会统一查找 `PCL visualization` 和 `OpenCV`，因为仓库里还包含可视化示例和 `pcd2bev` 示例。
-- 所以如果你直接按当前仓库整体执行 `bash scripts/build.sh`，建议按仓库依赖来准备环境：`PCL + nlohmann-json + OpenCV + Python3`。
-- 如果你后续把 `pcd2web` 单独拆成一个更小的工程，那么它本身并不依赖 OpenCV，也不依赖 PCL 的桌面可视化窗口。
+- 当前分支默认只构建 `pcd2web`。
+- 当前分支默认不要求 `OpenCV`，也不要求 `PCL visualization`。
+- 如果你只是想把服务器点云发到本地浏览器查看，这个最小分支已经足够。
 
 本地最小运行依赖：
 - `ssh` 客户端

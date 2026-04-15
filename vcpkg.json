@@ -1,23 +1,10 @@
 {
-  "name": "learn-pcl",
+  "name": "pointcloud-web-viewer",
   "version-string": "0.1.0",
-  "description": "PCL C++ learning workspace",
+  "description": "Minimal server-side point cloud to web viewer workflow",
   "dependencies": [
-    {
-      "name": "pcl",
-      "features": [
-        "visualization"
-      ]
-    },
-    "eigen3",
-    "boost",
+    "pcl",
     "nlohmann-json",
-    {
-      "name": "opencv4",
-      "default-features": false,
-      "features": [
-        "png"
-      ]
-    }
+    "python3"
   ]
 }

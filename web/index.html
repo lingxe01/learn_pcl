@@ -193,7 +193,7 @@
       <div class="section">
         <div class="row">
           <label for="pointcloudPath">点云路径（服务器端）</label>
-          <input id="pointcloudPath" type="text" value="/home/lingzhiying/learn/learn_pcl/data/kitti/training/velodyne/000000.bin">
+          <input id="pointcloudPath" type="text" value="data/your_pointcloud.bin" placeholder="例如 /data/kitti/000000.bin 或 data/demo.pcd">
         </div>
         <div class="row">
           <label for="voxelLeafSize">体素尺寸 x,y,z（米）</label>
@@ -213,7 +213,7 @@
         </div>
         <div class="row">
           <label for="dataPath">JSON 路径（HTTP）</label>
-          <input id="dataPath" type="text" value="/output/kitti_000000_web.json">
+          <input id="dataPath" type="text" value="/output/web_runtime_pointcloud.json">
         </div>
         <button id="convertButton">转换并加载点云</button>
         <button id="reloadButton" class="secondary">仅重新加载 JSON</button>

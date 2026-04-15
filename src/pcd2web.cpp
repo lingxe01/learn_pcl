@@ -179,10 +179,8 @@ bool LoadConfig(const std::string& config_path, WebConfig* config) {
     nlohmann::json j;
     cfg >> j;
 
-    config->pointcloud_path = j.at("pointcloud_path").get<std::string>();
-    if (config->pointcloud_path.empty()) {
-      std::cerr << "Empty pointcloud_path in config: " << config_path << "\n";
-      return false;
+    if (j.contains("pointcloud_path")) {
+      config->pointcloud_path = j.at("pointcloud_path").get<std::string>();
     }
 
     if (j.contains("web_pointcloud_path")) {
@@ -231,7 +229,11 @@ bool LoadConfig(const std::string& config_path, WebConfig* config) {
     return false;
   }
 
-  return ValidateConfig(*config);
+  if (config->web_pointcloud_path.empty()) {
+    std::cerr << "Empty web output path in config: " << config_path << "\n";
+    return false;
+  }
+  return true;
 }
 
 // 解析命令行参数，允许服务端按需指定输入点云路径和输出 JSON 路径。
@@ -315,11 +317,19 @@ bool ApplyCommandLineArgs(int argc, char** argv, WebConfig* config) {
 }  // namespace
 
 int main(int argc, char** argv) {
-  // 1. 读取配置
+  // 1. 优先读取可选配置文件。
+  // 对这个最小分支来说，配置文件不是强制项：
+  // - 如果存在，则作为默认值来源；
+  // - 如果不存在，依赖命令行或网页传参即可。
   const std::string config_path = "config/pointcloud.json";
   WebConfig config;
-  if (!LoadConfig(config_path, &config)) {
-    return 1;
+  if (std::filesystem::exists(config_path)) {
+    if (!LoadConfig(config_path, &config)) {
+      return 1;
+    }
+  } else {
+    std::cout << "Config not found, continue with defaults and command line arguments: "
+              << config_path << "\n";
   }
   if (!ApplyCommandLineArgs(argc, argv, &config)) {
     return 1;
