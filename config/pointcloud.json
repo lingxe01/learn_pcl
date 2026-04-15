@@ -1,0 +1,12 @@
+{
+  "pointcloud_path": "/home/lingzhiying/learn/learn_pcl/data/kitti/training/velodyne/000000.bin",
+  "voxel_leaf_size": [0.2, 0.2, 0.2],
+  "screenshot_path": "output/kitti_000000.png",
+  "bev_image_path": "output/kitti_000000_bev.png",
+  "web_pointcloud_path": "output/kitti_000000_web.json",
+  "web_server_port": 8080,
+  "bev_resolution": 0.1,
+  "bev_x_range": [-40, 70.4],
+  "bev_y_range": [-40.0, 40.0],
+  "bev_z_range": [-3.0, 1.0]
+}

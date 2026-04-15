@@ -3,8 +3,21 @@
   "version-string": "0.1.0",
   "description": "PCL C++ learning workspace",
   "dependencies": [
-    "pcl",
+    {
+      "name": "pcl",
+      "features": [
+        "visualization"
+      ]
+    },
     "eigen3",
-    "boost"
+    "boost",
+    "nlohmann-json",
+    {
+      "name": "opencv4",
+      "default-features": false,
+      "features": [
+        "png"
+      ]
+    }
   ]
 }

@@ -56,3 +56,11 @@ Thumbs.db
 
 # Vcpkg
 /vcpkg/
+
+# data
+/data/
+
+# runtime outputs
+/output/
+__pycache__/
+*.pyc
