@@ -8,32 +8,87 @@ find_package(PCL CONFIG REQUIRED COMPONENTS common io filters visualization)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(OpenCV CONFIG REQUIRED COMPONENTS core imgcodecs imgproc)
 
-add_executable(pcl_basic src/main.cpp)
-target_include_directories(pcl_basic PRIVATE ${PCL_INCLUDE_DIRS})
-target_compile_definitions(pcl_basic PRIVATE ${PCL_DEFINITIONS})
+function(configure_pcl_target target_name)
+  target_include_directories(
+    ${target_name}
+    PRIVATE
+      ${PROJECT_SOURCE_DIR}/include
+      ${PCL_INCLUDE_DIRS}
+  )
+  target_compile_definitions(${target_name} PRIVATE ${PCL_DEFINITIONS})
+endfunction()
+
+add_executable(
+  pcl_basic
+  src/main.cpp
+  src/apps/simple_cloud_app.cpp
+)
+configure_pcl_target(pcl_basic)
 target_link_libraries(pcl_basic PRIVATE ${PCL_LIBRARIES})
 
-add_executable(lesson_01_io src/lesson_01_io.cpp)
-target_include_directories(lesson_01_io PRIVATE ${PCL_INCLUDE_DIRS})
-target_compile_definitions(lesson_01_io PRIVATE ${PCL_DEFINITIONS})
+add_executable(
+  lesson_01_io
+  src/lesson_01_io.cpp
+  src/apps/lesson_01_io_app.cpp
+)
+configure_pcl_target(lesson_01_io)
 target_link_libraries(lesson_01_io PRIVATE ${PCL_LIBRARIES})
 
-add_executable(lesson_kitti_io src/lesson_kitti_io.cpp)
-target_include_directories(lesson_kitti_io PRIVATE ${PCL_INCLUDE_DIRS})
-target_compile_definitions(lesson_kitti_io PRIVATE ${PCL_DEFINITIONS})
-target_link_libraries(lesson_kitti_io PRIVATE ${PCL_LIBRARIES} nlohmann_json::nlohmann_json)
+add_executable(
+  lesson_kitti_io
+  src/lesson_kitti_io.cpp
+  src/apps/lesson_kitti_io_app.cpp
+  src/common/point_cloud_io.cpp
+)
+configure_pcl_target(lesson_kitti_io)
+target_link_libraries(
+  lesson_kitti_io
+  PRIVATE
+    ${PCL_LIBRARIES}
+    nlohmann_json::nlohmann_json
+)
 
-add_executable(lesson_visualization src/lesson_visualization.cpp)
-target_include_directories(lesson_visualization PRIVATE ${PCL_INCLUDE_DIRS})
-target_compile_definitions(lesson_visualization PRIVATE ${PCL_DEFINITIONS})
-target_link_libraries(lesson_visualization PRIVATE ${PCL_LIBRARIES} nlohmann_json::nlohmann_json)
+add_executable(
+  lesson_visualization
+  src/lesson_visualization.cpp
+  src/apps/lesson_visualization_app.cpp
+  src/common/point_cloud_io.cpp
+)
+configure_pcl_target(lesson_visualization)
+target_link_libraries(
+  lesson_visualization
+  PRIVATE
+    ${PCL_LIBRARIES}
+    nlohmann_json::nlohmann_json
+)
 
-add_executable(pcd2bev src/pcd2bev.cpp)
-target_include_directories(pcd2bev PRIVATE ${PCL_INCLUDE_DIRS})
-target_compile_definitions(pcd2bev PRIVATE ${PCL_DEFINITIONS})
-target_link_libraries(pcd2bev PRIVATE ${PCL_LIBRARIES} nlohmann_json::nlohmann_json opencv_core opencv_imgcodecs opencv_imgproc)
+add_executable(
+  pcd2bev
+  src/pcd2bev.cpp
+  src/apps/pcd2bev_app.cpp
+  src/common/point_cloud_io.cpp
+)
+configure_pcl_target(pcd2bev)
+target_link_libraries(
+  pcd2bev
+  PRIVATE
+    ${PCL_LIBRARIES}
+    nlohmann_json::nlohmann_json
+    opencv_core
+    opencv_imgcodecs
+    opencv_imgproc
+)
 
-add_executable(pcd2web src/pcd2web.cpp)
-target_include_directories(pcd2web PRIVATE ${PCL_INCLUDE_DIRS})
-target_compile_definitions(pcd2web PRIVATE ${PCL_DEFINITIONS})
-target_link_libraries(pcd2web PRIVATE ${PCL_LIBRARIES} nlohmann_json::nlohmann_json)
+add_executable(
+  pcd2web
+  src/pcd2web.cpp
+  src/apps/pcd2web_app.cpp
+  src/common/point_cloud_io.cpp
+)
+configure_pcl_target(pcd2web)
+target_link_libraries(
+  pcd2web
+  PRIVATE
+    ${PCL_LIBRARIES}
+    nlohmann_json::nlohmann_json
+)
